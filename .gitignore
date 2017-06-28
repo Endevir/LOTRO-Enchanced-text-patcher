@@ -7,5 +7,7 @@
 *.zip
 *.pyc
 *.pyw
+*.db
+*TMP*
 /build/*
 /dist/*

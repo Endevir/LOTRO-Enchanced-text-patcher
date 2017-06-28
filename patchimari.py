@@ -102,7 +102,7 @@ def PATCH_IT(patch_file, dat_file):
 				current_subby.fragments[fragment_id].pieces = fragment_data[1:-1].split(u'<--DO_NOT_TOUCH!-->')
 				
 		if current_file_id != -1 and current_subby is not None:
-			data_new = current_subby.get_data(args_order, fragment_id)
+			data_new = current_subby.get_data(args_order, file_id, fragment_id)
 			PurgeSubfileData(handle, current_file_id)
 			#open('s_data', 'a+b').write(data_new)
 			PutSubfileData(handle, current_file_id, data_new, current_subby.version, files_dat[current_file_id][1])

@@ -5,10 +5,23 @@ import codecs
 import os
 import ctypes
 import copy
+import sqlite3
 
 datexport = cdll.LoadLibrary('datexport')
 datexport.GetSubfileSizes.restype = None
 datexport.CloseDatFile.restype = None
+
+def GetDefaultArguments(file_id, gossip_id):
+    off_path = GetOfficialTextPatchPath() + "texts.db"
+    con = sqlite3.connect(off_path)
+    cur = con.cursor()
+    cur.execute('SELECT args FROM patch_data WHERE file_id=' + str(file_id) + ' AND gossip_id=' + str(gossip_id))
+    a = cur.fetchone()
+    con.close()
+    return a[0].split('-')
+
+def GetOfficialTextPatchPath():
+    return ""
 
 def OpenDatFile(handle, file_name, flags):
     # handle: internal index of dat file (more than one file can be opened at once)
@@ -239,7 +252,7 @@ class SubFile:
         #print 'done'
         return 1
         
-    def get_data(self, args_order = [], mfragment_id = None):
+    def get_data(self, args_order = [], mfile_id = None, mfragment_id = None):
         stream = io.BytesIO()
         unicode_stream = codecs.getwriter('utf-16le')(stream)
         
@@ -268,12 +281,14 @@ class SubFile:
                 unicode_stream.write(piece)
             if fragment_id == mfragment_id:
                 fragment.arg_refs1 = copy.deepcopy(fragment.arg_refs)
+                arg_refs1 = [int(i) for i in GetDefaultArguments(mfile_id, mfragment_id)]
+                print arg_refs1
                 #fragment.arg_strings1 = fragment.arg_strings   
-               #print(args_order)
-               #print(fragment.arg_refs)
+                #print(args_order)
+                #print(fragment.arg_refs)
                 #print(fragment.arg_strings)
                 for i in range(len(args_order)):
-                    fragment.arg_refs[i] = fragment.arg_refs1[args_order[i]]
+                    fragment.arg_refs[i] = struct.pack('L', arg_refs1[args_order[i]])
                     #fragment.arg_strings[i] = fragment.arg_strings1[args_order[i]]
                #print(fragment.arg_refs)
         
