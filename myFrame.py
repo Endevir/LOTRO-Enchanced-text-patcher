@@ -25,7 +25,7 @@ class ProgressDialog(wx.Frame):
     
     def Enable(self):
         self.UpdatePercent(0)
-        self.MakeModal(True)
+        self.MakeModal(False)
         self.Show(True)
         
     def Disable(self):
@@ -73,6 +73,12 @@ class Frame(wx.Frame):
         dlg.ShowModal()    
         dlg.Destroy()
         
+    def ErrorMessage(self, msg):
+        dlg = wx.MessageDialog(self, msg, u"Ошибка!", wx.OK | wx.ICON_ERROR)
+        dlg.ShowModal()    
+        dlg.Destroy()
+             
+    
     def addGUI(self):
         # Logo text
         LogoText = wx.StaticText(self.mainPanel, -1, "LOTRO Patcher: Enchanced edition", (0, 0), (768, -1), wx.ALIGN_CENTER)
@@ -144,7 +150,6 @@ class Frame(wx.Frame):
     
     def Login(self, event):
         # Function - logins user to the application via site controls
-        
         self.nUserName = self.UserName_input.GetValue() # New username
         self.npassword = self.password_input.GetValue() # New password
         
@@ -185,7 +190,7 @@ class Frame(wx.Frame):
         
     def StartUpdate(self):
         # Function - Updates texts...
-        
+    
         # Doing the preparations
         gl.progress_wnd.UpdateStageText(u"Инициализация обновления...")
         self.starttime = -1

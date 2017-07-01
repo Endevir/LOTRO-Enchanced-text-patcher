@@ -189,7 +189,13 @@ class SubFile:
         file_id = dword(stream.read(4))
         if self.file_id is None:
             self.file_id = file_id
-            
+                
+        if not self.file_id == file_id:
+            print "AAAAAAAAAAAAAAAAAAA"
+            print self.file_id
+            print "SHOULD BE TURNED TO:"
+            print file_id            
+        
         assert self.file_id == file_id
         
         if not is_text_file(self.file_id):
@@ -279,19 +285,23 @@ class SubFile:
                     stream.write(struct.pack('<B', piece_size))
                 
                 unicode_stream.write(piece)
-            if fragment_id == mfragment_id:
-                fragment.arg_refs1 = copy.deepcopy(fragment.arg_refs)
-                arg_refs1 = [int(i) for i in GetDefaultArguments(mfile_id, mfragment_id)]
-                print arg_refs1
-                #fragment.arg_strings1 = fragment.arg_strings   
-                #print(args_order)
-                #print(fragment.arg_refs)
-                #print(fragment.arg_strings)
+                
+            if fragment_id == mfragment_id and not mfile_id == None and not mfragment_id == None: 
+                fragment.default_arguments = GetDefaultArguments(mfile_id, mfragment_id)
+            else:
+                fragment.default_arguments = None
+                
+            if fragment_id == mfragment_id and len(fragment.default_arguments) > 0 and not fragment.default_arguments[0] == u'':
+                
+                #fragment.arg_refs1 = copy.deepcopy(fragment.arg_refs)
+                arg_refs1 = [int(i) for i in fragment.default_arguments]
+                
                 for i in range(len(args_order)):
-                    fragment.arg_refs[i] = struct.pack('L', arg_refs1[args_order[i]])
+                    fragment.arg_refs[i] = struct.pack('<I', arg_refs1[args_order[i]])                    
+                    #fragment.arg_refs[i] = fragment.arg_refs1[args_order[i]]                    
+                    
                     #fragment.arg_strings[i] = fragment.arg_strings1[args_order[i]]
-               #print(fragment.arg_refs)
-        
+                    
             stream.write(struct.pack('<I', len(fragment.arg_refs)))
             for v in fragment.arg_refs:
                 stream.write(v)

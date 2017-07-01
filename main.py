@@ -38,3 +38,4 @@ if __name__ == '__main__':
     gl.wnd = Frame(None, "LOTRO Patcher: Enchanced edition ver." + gl.VERSION)
     gl.app.MainLoop()
     writeConfig(gl.cfg, gl.path)
+

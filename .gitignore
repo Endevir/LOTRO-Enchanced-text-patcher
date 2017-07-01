@@ -11,3 +11,4 @@
 *TMP*
 /build/*
 /dist/*
+*.pyc
