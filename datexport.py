@@ -6,6 +6,7 @@ import os
 import ctypes
 import copy
 import sqlite3
+import GlobalVars as gl
 
 datexport = cdll.LoadLibrary('datexport')
 datexport.GetSubfileSizes.restype = None
@@ -21,7 +22,7 @@ def GetDefaultArguments(file_id, gossip_id):
     return a[0].split('-')
 
 def GetOfficialTextPatchPath():
-    return ""
+    return str(gl.cfg["DatPath"][:-24])
 
 def OpenDatFile(handle, file_name, flags):
     # handle: internal index of dat file (more than one file can be opened at once)
