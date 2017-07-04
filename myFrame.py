@@ -12,6 +12,7 @@ import http.client
 import urllib
 import GlobalVars as gl
 import threading 
+import subprocess
 
 class ProgressDialog(wx.Frame):
     def __init__(self, parent, title):
@@ -25,7 +26,7 @@ class ProgressDialog(wx.Frame):
     
     def Enable(self):
         self.UpdatePercent(0)
-        self.MakeModal(False)
+        self.MakeModal(True)
         self.Show(True)
         
     def Disable(self):
@@ -69,15 +70,20 @@ class Frame(wx.Frame):
         self.Show(True)
         
     def WarningMessage(self, msg):
-        dlg = wx.MessageDialog(self, msg, u"Внимание!", wx.OK | wx.ICON_WARNING)
+        dlg = wx.MessageDialog(self, msg, u"Внимание!", wx.OK | wx.ICON_WARNING | wx.STAY_ON_TOP)
         dlg.ShowModal()    
         dlg.Destroy()
         
     def ErrorMessage(self, msg):
-        dlg = wx.MessageDialog(self, msg, u"Ошибка!", wx.OK | wx.ICON_ERROR)
+        dlg = wx.MessageDialog(self, msg, u"Ошибка!", wx.OK | wx.ICON_ERROR | wx.STAY_ON_TOP)
         dlg.ShowModal()    
         dlg.Destroy()
-             
+
+    def InformationMessage(self, msg):
+        dlg = wx.MessageDialog(self, msg, u"Уведомление", wx.OK | wx.ICON_INFORMATION | wx.STAY_ON_TOP)
+        dlg.ShowModal()    
+        dlg.Destroy()
+        
     
     def addGUI(self):
         # Logo text
@@ -142,9 +148,11 @@ class Frame(wx.Frame):
         if gl.cfg["DatPath"] == "NULL":
             self.WarningMessage(u"Сначала укажите путь к папке с игрой!")
             return
-        execstr = str(gl.cfg["DatPath"][:-24]) + "TurbineLauncher.exe -nosplash -disablePatch -skiprawdownload"
-        try:
-            os.system('"' + str(gl.cfg["DatPath"][:-24]) + 'TurbineLauncher.exe" -nosplash -disablePatch -skiprawdownload')
+        execstr = '"' + str(gl.cfg["DatPath"][:-24]) + 'TurbineLauncher.exe" -nosplash -disablePatch -skiprawdownload'
+	    
+	try:
+	    import win32api
+	    win32api.WinExec(execstr)
         except:
             self.WarningMessage(u'Не найден файл TurbineLauncher.exe в папке с .dat файлом... Не можем запустить игру :(')
     
@@ -261,6 +269,8 @@ class Frame(wx.Frame):
         # Destroying dialog window, when patch applied.
         gl.progress_wnd.Disable()
         gl.progress_wnd.Destroy()        
+	self.InformationMessage(u'Установка текстов завершена.\nПодробности см. в окне логов')
+	
         
     def CreatePatch(self, approved, mtype):
         # mtype = "translated"|"approved". Переведенные или утвержденные пользователем тексты соответственно
@@ -281,10 +291,8 @@ class Frame(wx.Frame):
             gl.server_conn.request("GET", u"/groupware/get1/" + str(self.starttime) + u"?to=" + str(self.endtime) + "&moder=" + urllib.quote(self.uname.encode('utf-8')))
             self.resp = gl.server_conn.getresponse()
             self.respdata = str(self.resp.read()).decode('UTF-8')            
-            #print(u"/groupware/get1/" + str(self.starttime) + u"?to=" + str(self.endtime) + "&moder=" + urllib.quote(self.uname.encode('utf-8')))
-        
+            
         gl.progress_wnd.UpdateStageText(u"Формирование патча " + apptext + "...")
-        #print(str(self.respdata))
         tmp = self.respdata.split('\r\n')
         for i in range(len(tmp)):
             tmp[i] = tmp[i].split('||')
@@ -297,21 +305,16 @@ class Frame(wx.Frame):
         progress_str = "None"
         
         for i in tmp:
-            #print("Готово " + str(int(kol / float(len(tmp)) * 100)) + "% данных...\n")
             newstr = "Готово " + str(int(kol / float(len(tmp)) * 100)) + "% данных...\n"
             if not progress_str == newstr:
                 gl.progress_wnd.UpdatePercent(int(kol / float(len(tmp)) * 100))                          
-                #self.RemoveFromLog(progress_str)
-                #progress_str = newstr
-                #self.AddToLog(progress_str)             
             if len(i) == 5 and i[4] == approved:
                 try:
                     AddOneStringToPatch(i[0], i[1], i[2], i[3])
                 except:
                     self.AddToLog("ПРОБЛЕМА! ПРОБЛЕМА! НЕ СМОГЛИ ПРОПАТЧИТЬ СТРОКУ!!!\n")
                 kol += 1
-        #print("VERY_IMPORTANT_NUM = " + str(kol))
-        
+
         self.AddToLog(u"Готово 100% данных...\n")
         gl.progress_wnd.UpdateStageText(u"Установка патча " + apptext + " ...")
         if kol > 0:
@@ -319,7 +322,7 @@ class Frame(wx.Frame):
             PatchFile(self.dat_path)
         else:
             self.AddToLog(u"Получено 0 " + apptext + ". Ничего не делаем...\n###################\n")
-                                  
+	
     def UpdateGUI(self, event):
         if gl.cfg["DatPath"] == "NULL":
             self.WarningMessage(u"Сначала укажите путь к папке и игрой!")

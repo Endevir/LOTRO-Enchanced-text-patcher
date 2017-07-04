@@ -299,7 +299,6 @@ class SubFile:
                 for i in range(len(args_order)):
                     fragment.arg_refs[i] = struct.pack('<I', arg_refs1[args_order[i]])                    
                     #fragment.arg_refs[i] = fragment.arg_refs1[args_order[i]]                    
-                    
                     #fragment.arg_strings[i] = fragment.arg_strings1[args_order[i]]
                     
             stream.write(struct.pack('<I', len(fragment.arg_refs)))
