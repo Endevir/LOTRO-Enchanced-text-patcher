@@ -12,5 +12,3 @@ global app
 global wnd
 global progress_wnd
 global server_conn
-
-
