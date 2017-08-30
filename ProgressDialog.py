@@ -1,18 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import sys
-import os.path
-from appfunc import *
 import wx
-import random
-import webbrowser
-import shutil
-import time 
-import http.client
-import urllib
-import GlobalVars as gl
-import logging
-import threading 
 
 class ProgressDialog(wx.Frame):
     def __init__(self, parent, title):
@@ -21,8 +9,10 @@ class ProgressDialog(wx.Frame):
         self.InitUI()
         self.SetSize((450, 200))
         self.SetTitle(u"Применение обновлений")
+        self.Center()
         self.MakeModal(True)        
         self.Show(True)
+
     
     def Enable(self):
         self.UpdatePercent(0)
@@ -43,13 +33,24 @@ class ProgressDialog(wx.Frame):
         self.Gauge = wx.Gauge(self.mainPanel, -1, 100, pos = (20, 90), size=(410, 30))
     
     def UpdatePercent(self, percent):
+        if self.ProcText.GetLabel() == str(percent) + u"%":
+            return
         self.ProcText.SetLabel(str(percent) + u"%")
         self.Gauge.SetValue(int(percent))
         self.ProcText.Update()
         self.Gauge.Update()
         
     def UpdateStageText(self, str):
+        if self.StageText == u''.join(str):
+            return
         self.StageText = u''.join(str)
         self.Text1.SetLabel(self.StageText)
         self.Text1.Update()
+        self.mainPanel.Update()
+
+    def UpdateTitleText(self, str):
+        if self.Text0.GetLabel() == u''.join(str):
+            return
+        self.Text0.SetLabel(u''.join(str))
+        self.Text0.Update()
         self.mainPanel.Update()

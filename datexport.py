@@ -4,9 +4,6 @@ from ctypes import *
 import struct
 import io
 import codecs
-import os
-import ctypes
-# import copy
 import sqlite3
 
 import GlobalVars as gl
@@ -14,21 +11,6 @@ import GlobalVars as gl
 datexport = cdll.LoadLibrary('datexport')
 datexport.GetSubfileSizes.restype = None
 datexport.CloseDatFile.restype = None
-
-
-def GetDefaultArguments(file_id, gossip_id):
-    off_path = GetOfficialTextPatchPath() + "texts.db"
-    con = sqlite3.connect(off_path)
-    cur = con.cursor()
-    cur.execute('SELECT args FROM patch_data WHERE file_id=' + str(file_id) + ' AND gossip_id=' + str(gossip_id))
-    a = cur.fetchone()
-    con.close()
-    return a[0].split('-')
-
-
-def GetOfficialTextPatchPath():
-    return str(gl.cfg["DatPath"][:-24])
-
 
 def OpenDatFile(handle, file_name, flags):
     # handle: internal index of dat file (more than one file can be opened at once)
@@ -48,7 +30,6 @@ def OpenDatFile(handle, file_name, flags):
 
 def GetNumSubfiles(handle):
     return datexport.GetNumSubfiles(c_int(handle))
-
 
 def GetSubfileSizes(handle, offset, count):
     # offset: index from 0 to (num_subfiles - 1)
@@ -281,7 +262,7 @@ class SubFile:
         # print 'done'
         return 1
 
-    def get_data(self, args_order=[], mfile_id=None, mfragment_id=None):
+    def get_data(self, args_order = [], args_id = [], mfile_id=None, mfragment_id=None):
         stream = io.BytesIO()
         unicode_stream = codecs.getwriter('utf-16le')(stream)
 
@@ -309,19 +290,18 @@ class SubFile:
 
                 unicode_stream.write(piece)
 
-            if fragment_id == mfragment_id and not mfile_id == None and not mfragment_id == None:
-                fragment.default_arguments = GetDefaultArguments(mfile_id, mfragment_id)
-            else:
-                fragment.default_arguments = None
-
-            if fragment_id == mfragment_id and len(fragment.default_arguments) > 0 and not fragment.default_arguments[
-                0] == u'':
-
-                # fragment.arg_refs1 = copy.deepcopy(fragment.arg_refs)
-                arg_refs1 = [int(i) for i in fragment.default_arguments]
-
+            if fragment_id == mfragment_id and len(args_order) > 0:
+                print "QQQQQQQQQQQ"
+                args_id1 = [int(i) for i in args_id]
+                import logging
+                logging.info(u"Using fragment")
+                print args_id1
+                print args_id
+                print args_order
+                #fragment.arg_refs = [struct.pack('<I', args_id1[args_order[i]]) for i in range(len(args_order))]
                 for i in range(len(args_order)):
-                    fragment.arg_refs[i] = struct.pack('<I', arg_refs1[args_order[i]])
+                    #args_id[i] = struct.pack('<I', args_id1[args_order[i]])
+                    fragment.arg_refs[i] = struct.pack('<I', args_id[args_order[i]])
                     # fragment.arg_refs[i] = fragment.arg_refs1[args_order[i]]
                     # fragment.arg_strings[i] = fragment.arg_strings1[args_order[i]]
 

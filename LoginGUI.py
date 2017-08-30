@@ -1,15 +1,25 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from appfunc import *
 import time
 import GlobalVars as gl
+import wx
+import logging
 
 class LoginGUI():
     def __init__(self, parent):
         self.wnd = parent
-        pass
+
+    def DoPreparations(self):
+        # Проверка непредвиденного поведения и выход
+        if gl.cfg["DatPath"] == "NULL":
+            self.wnd.WarningMessage(u"Сначала укажите путь к папке и игрой!")
+            return -1
+
     def Start(self, event = None):
+        if self.DoPreparations() == -1:
+            return
+
         self.wnd.RemoveGUI()
         self.text0 = wx.StaticText(self.wnd.gui_panel, -1,
                                    u"Вы не залогинились!\n Войдите, используя e-mail и пароль от сайта transtale.lotros.ru",
@@ -19,7 +29,7 @@ class LoginGUI():
 
         if gl.cfg["UserName"] and not gl.cfg["UserName"] == "NULL" and gl.cfg["LoginTime"] and not gl.cfg[
             "LoginTime"] == "NULL":
-            if int(time.time()) - int(gl.cfg["LoginTime"]) > 86400:
+            if int(time.time()) - int(gl.cfg["LoginTime"]) > 86400 and gl.cfg["ForceSaveLogin"] == "false":
                 gl.cfg["UserName"] = "NULL"
                 gl.cfg["LoginTime"] = "NULL"
                 gl.cfg["UserGroup"] = "NULL"
@@ -48,6 +58,33 @@ class LoginGUI():
 
         self.login_button = wx.Button(self.wnd.gui_panel, -1, u'Войти', pos=(150, 150))
         self.wnd.Bind(wx.EVT_BUTTON, self.Login, self.login_button)
+
+        self.SetupSettingsPanel()
+
+    def SetupSettingsPanel(self):
+        self.cb1 = wx.CheckBox(self.wnd.setting_panel, label=u'Запомнить данные пользователя', pos=(5, 10))
+        if gl.cfg["ForceSaveLogin"] == "True":
+            self.cb1.SetValue(True)
+
+        self.but1 = wx.Button(self.wnd.setting_panel, label=u'Выйти с этого аккаунта', pos=(5, 40), size=(210, -1))
+
+        self.wnd.Bind(wx.EVT_CHECKBOX, self.ChangeForceSaveLoginOption, self.cb1)
+        self.wnd.Bind(wx.EVT_BUTTON, self.ExitAccount, self.but1)
+
+    def ChangeForceSaveLoginOption(self, event = None):
+        gl.cfg["ForceSaveLogin"] = str(self.cb1.GetValue())
+        logging.info(u"Смена состояния параметра ForceSaveLogin на " + gl.cfg["ForceSaveLogin"])
+
+    def ExitAccount(self, event = None):
+        if gl.cfg["UserName"] == "NULL":
+            self.wnd.InformationMessage(u"Вход в аккаунт не был выполнен")
+            return
+        gl.cfg["UserName"] = "NULL"
+        gl.cfg["LoginTime"] = "NULL"
+        gl.cfg["UserGroup"] = "NULL"
+        gl.cfg["UserNick"] = "NULL"
+        self.Start()
+        self.wnd.InformationMessage(u"Вы успешно вышли из аккаунта")
 
     def Login(self, event):
         # Function - logins user to the application via server controls
