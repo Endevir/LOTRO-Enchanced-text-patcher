@@ -11,3 +11,5 @@
 *TMP*
 /build/*
 /dist/*
+*.pyc
+.idea/*
