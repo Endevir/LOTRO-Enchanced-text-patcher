@@ -5,12 +5,27 @@ import struct
 import io
 import codecs
 import sqlite3
+import GlobalVars as gl
 
 import GlobalVars as gl
 
 datexport = cdll.LoadLibrary('datexport')
 datexport.GetSubfileSizes.restype = None
 datexport.CloseDatFile.restype = None
+
+def GetDefaultArguments(file_id, gossip_id):
+    off_path = GetOfficialTextPatchPath() + "texts.db"
+    con = sqlite3.connect(off_path)
+    cur = con.cursor()
+    cur.execute('SELECT args FROM patch_data WHERE file_id=' + str(file_id) + ' AND gossip_id=' + str(gossip_id))
+    a = cur.fetchone()
+    con.close()
+    print "file_id = " + str(file_id) + "; gossip_id=" + str(gossip_id) + "; result:"
+    print a[0].split('-')
+    return a[0].split('-')
+
+def GetOfficialTextPatchPath():
+    return gl.cfg["DatPath"][:-24]
 
 def OpenDatFile(handle, file_name, flags):
     # handle: internal index of dat file (more than one file can be opened at once)
