@@ -22,7 +22,7 @@ class LoginGUI():
 
         self.wnd.RemoveGUI()
         self.text0 = wx.StaticText(self.wnd.gui_panel, -1,
-                                   u"Вы не залогинились!\n Войдите, используя e-mail и пароль от сайта transtale.lotros.ru",
+                                   u"Вы не вошли в систему!\n Войдите, используя e-mail и пароль от сайта transtale.lotros.ru",
                                    pos=(0, 10), size=(450, -1), style=wx.ALIGN_CENTER)
         self.text0.SetFont(wx.Font(10, family=wx.FONTFAMILY_SWISS, weight=wx.FONTWEIGHT_NORMAL, style=wx.NORMAL))
         self.UserName = ""

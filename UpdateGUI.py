@@ -98,7 +98,7 @@ class UpdateGUI:
     def SetWelcomeMessage(self):
         if gl.cfg["UserGroup"] == "translator":
             self.text0 = wx.StaticText(self.wnd.gui_panel, -1, u"Вы вошли как переводчик, " + str(gl.cfg[
-                                                                                                      "UserNick"]) + u"\n Вы можете скачать и установить все утвержденные переводы,\nили свои ещё переводы.",
+                                                                                                      "UserNick"]) + u"\n Вы можете скачать и установить все утвержденные переводы,\nа также свои ещё не утвержденные переводы.",
                                        pos=(0, 3), size=(450, -1), style=wx.ALIGN_CENTER)
 
         elif gl.cfg["UserGroup"] == "moderator" or gl.cfg["UserGroup"] == "developer" or gl.cfg["UserGroup"] == "administrator":
@@ -241,9 +241,9 @@ class UpdateGUI:
                 InfoText += str(kol2) + u' неутвержденных переводов пользователя ' + str(self.uname) + u'.\n'
         if (kol3 > 0):
             if (self.uname == "All"):
-                InfoText += str(kol2) + u' утвержденных пользователями переводов.\n'
+                InfoText += str(kol3) + u' утвержденных пользователями переводов.\n'
             else:
-                InfoText += str(kol2) + u' неутвержденных пользователем ' + str(self.uname) + u'переводов.\n'
+                InfoText += str(kol3) + u' утвержденных пользователем ' + str(self.uname) + u' переводов.\n'
         if (kol1 == 0 and kol2 == 0 and kol3 == 0):
             InfoText += u' 0 переводов.'
 

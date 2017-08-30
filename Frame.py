@@ -9,9 +9,10 @@ import sys
 
 from MainGUI import MainGUI
 from LoginGUI import LoginGUI
-from SelfPatchGUI import  SelfPatchGUI
+from SelfPatchGUI import SelfPatchGUI
 from UpdateGUI import UpdateGUI
 from FaqDialog import FaqDialog
+
 
 class Frame(wx.Frame):
     def MakeConnection(self):
@@ -25,11 +26,13 @@ class Frame(wx.Frame):
             version_end = self.respdata.find('</version>')
             self.onsite_version = self.respdata[version_start:version_end]
         except:
-            self.ErrorMessage(u"Ошибка подключения к серверу, работа программы не может быть продолжена без интернет-соединения :(")
+            self.ErrorMessage(
+                u"Ошибка подключения к серверу, работа программы не может быть продолжена без интернет-соединения :(")
             sys.exit(0)
 
         if not self.onsite_version == gl.VERSION:
-            self.WarningMessage(u"Внимание! Данная версия программы устарела! В целях безопасности использование устаревшей версии невозможно... После нажатия кнопки \"ОК\" Вы будете автоматически перенаправлены на страницу загрузки новой версии! Мы очень стараемся сделать программу лучше с каждым обновлением!\n Спасибо за понимание :) ")
+            self.WarningMessage(
+                u"Внимание! Данная версия программы устарела! В целях безопасности использование устаревшей версии невозможно... После нажатия кнопки \"ОК\" Вы будете автоматически перенаправлены на страницу загрузки новой версии! Мы очень стараемся сделать программу лучше с каждым обновлением!\n Спасибо за понимание :) ")
             webbrowser.open("http://translate.lotros.ru/pages/easypatcher.html", new=2)
             sys.exit(0)
 
@@ -53,7 +56,7 @@ class Frame(wx.Frame):
     def StartGame(self, event):
         # Function - uses path to folder with client_local_English.dat, and starts TurbineLauncher.exe from the same folder
         if gl.cfg["DatPath"] == "NULL":
-            self.WarningMessage(u"Сначала укажите путь к папке с игрой!")
+            self.WarningMessage(u"Укажите путь к папке с игрой!")
             return
         execstr = '"' + str(gl.cfg["DatPath"][:-24]) + 'TurbineLauncher.exe" -nosplash -disablePatch -skiprawdownload'
 
@@ -63,7 +66,6 @@ class Frame(wx.Frame):
         except:
             self.WarningMessage(
                 u'Не найден файл TurbineLauncher.exe в папке с .dat файлом... Не можем запустить игру :(')
-
 
     def OnClickDatButton(self, event):
         if self.dat_dialogue.ShowModal() == wx.ID_OK:
@@ -169,14 +171,12 @@ class Frame(wx.Frame):
         dlg.ShowModal()
         dlg.Destroy()
 
-
     def ErrorMessage(self, msg):
         logging.error(msg)
         dlg = wx.MessageDialog(self, msg, u"Ошибка!", wx.OK | wx.ICON_ERROR | wx.STAY_ON_TOP)
         print sys.exc_info()[0]
         dlg.ShowModal()
         dlg.Destroy()
-
 
     def InformationMessage(self, msg):
         logging.info(msg)
