@@ -29,7 +29,7 @@ class MainGUI():
         self.but1 = wx.Button(self.wnd.setting_panel, label=u'Создать резервную копию', pos=(5, 40), size=(210, -1))
         self.but2 = wx.Button(self.wnd.setting_panel, label=u'Восстановить из резервной копии', pos=(5, 70),                              size=(210, -1))
 
-        self.but3 = wx.Button(self.wnd.setting_panel, label=u'Сформировать файл логов', pos=(5, 120), size=(210, -1))
+        self.but3 = wx.Button(self.wnd.setting_panel, label=u'Сформировать журнал логов', pos=(5, 120), size=(210, -1))
         self.but4 = wx.Button(self.wnd.setting_panel, label=u'Удалить все данные программы\nи выйти', pos=(5, 150), size=(210, -1))
 
         self.wnd.Bind(wx.EVT_CHECKBOX, self.ChangeFaq, self.cb1)
@@ -118,6 +118,13 @@ class MainGUI():
         self.wnd.InformationMessage(u"Готово! Файл с логами помещен на рабочий стол. Теперь его в случае необходимости можно отправить разработчику:\ne-mail: e1.gildor@gmail.com\nvk.com/gi1dor")
 
     def DELETE_ALL(self, event = None):
+        dlg = wx.MessageDialog(self.wnd,
+                               u"Вы уверены что хотите удалить ВСЕ данные этой программы? (В том числе файлы конфигурации и резервную копию, при наличии) \nЭто действие необратимо!",
+                               u"Удалить все данные программы?", wx.YES_NO | wx.ICON_QUESTION)
+        if not dlg.ShowModal() == wx.ID_YES:
+            self.wnd.InformationMessage(u"Полное удаление данных программы было отменено")
+            return
+
         gl.cfg["DELETE_ALL"] = 1
         self.wnd.Destroy()
 

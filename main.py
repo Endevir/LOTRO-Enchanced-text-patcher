@@ -129,7 +129,3 @@ if __name__ == '__main__':
     InitializeGUI()
     logging.info(u'Подготовка к выходу из программы...')
     StopApplication()
-
-
-
-

@@ -143,7 +143,7 @@ class Frame(wx.Frame):
         self.Bind(wx.EVT_BUTTON, self.Report, self.bug_report)
         self.Bind(wx.EVT_BUTTON, self.MainGUI.Start, self.return_back)
         self.Bind(wx.EVT_BUTTON, self.StartGame, self.startButton)
-        self.Bind(wx.EVT_CHAR, self.onKeyPress)
+        self.Bind(wx.wx.EVT_CHAR_HOOK, self.onKeyPress)
 
         self.MainGUI.Start()
 
@@ -155,7 +155,6 @@ class Frame(wx.Frame):
         if keycode == wx.WXK_F1:
             print(u'Нажали F1')
             gl.faq_wnd = FaqDialog(None)
-            gl.faq_wnd.Destroy()
         event.Skip()
 
     def RemoveGUI(self):

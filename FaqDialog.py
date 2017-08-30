@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import wx
 import wx.lib.wxpTag
+import wx.html2
 
 class FaqDialog(wx.Frame):
     def __init__(self, parent):
@@ -16,5 +17,7 @@ class FaqDialog(wx.Frame):
     def InitUI(self):
         f = open("faq.html", "r")# The html page as a python string literal
         page = f.read().replace('\n', '<br>').replace('\t', '    ').replace(' ', ' &nbsp;').decode('utf8')
-        self.htmlwin = wx.html.HtmlWindow(self)
-        self.htmlwin.SetPage(page)
+        #self.htmlwin = wx.html.HtmlWindow(self)
+        #self.htmlwin.SetPage(page)
+        self.browser = wx.html2.WebView.New(self)
+        self.browser.SetPage(page, "/")
