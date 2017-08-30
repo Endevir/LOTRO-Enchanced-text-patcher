@@ -79,7 +79,7 @@ def InitializeVariables():
     gl.path = os.getenv("APPDATA") + "\\Cenchanced\\config.cc"
     gl.patchpath = os.getenv("APPDATA") + "\\Cenchanced\\temp_patch.db"
     gl.cfg = parseConfig(gl.path)
-    gl.VERSION = "0.99"
+    gl.VERSION = "1.00"
 
 def CheckVersion():
     # Проверка совместимости текущей версии программы с файлом конфигурации
