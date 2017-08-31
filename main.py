@@ -84,7 +84,7 @@ def InitializeVariables():
     gl.path = os.getenv("APPDATA") + "\\Cenchanced\\config.cc"
     gl.patchpath = os.getenv("APPDATA") + "\\Cenchanced\\temp_patch.db"
     gl.cfg = parseConfig(gl.path)
-    gl.VERSION = "1.00"
+    gl.VERSION = "1.09"
 
 
 def CheckVersion():
