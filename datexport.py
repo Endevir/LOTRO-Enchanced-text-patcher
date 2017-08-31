@@ -13,6 +13,7 @@ datexport = cdll.LoadLibrary('datexport')
 datexport.GetSubfileSizes.restype = None
 datexport.CloseDatFile.restype = None
 
+
 def GetDefaultArguments(file_id, gossip_id):
     off_path = GetOfficialTextPatchPath() + "texts.db"
     con = sqlite3.connect(off_path)
@@ -24,8 +25,10 @@ def GetDefaultArguments(file_id, gossip_id):
     print a[0].split('-')
     return a[0].split('-')
 
+
 def GetOfficialTextPatchPath():
     return gl.cfg["DatPath"][:-24]
+
 
 def OpenDatFile(handle, file_name, flags):
     # handle: internal index of dat file (more than one file can be opened at once)
@@ -45,6 +48,7 @@ def OpenDatFile(handle, file_name, flags):
 
 def GetNumSubfiles(handle):
     return datexport.GetNumSubfiles(c_int(handle))
+
 
 def GetSubfileSizes(handle, offset, count):
     # offset: index from 0 to (num_subfiles - 1)
@@ -277,7 +281,7 @@ class SubFile:
         # print 'done'
         return 1
 
-    def get_data(self, args_order = [], args_id = [], mfile_id=None, mfragment_id=None):
+    def get_data(self, args_order=[], args_id=[], mfile_id=None, mfragment_id=None):
         stream = io.BytesIO()
         unicode_stream = codecs.getwriter('utf-16le')(stream)
 
@@ -313,9 +317,9 @@ class SubFile:
                 print args_id1
                 print args_id
                 print args_order
-                #fragment.arg_refs = [struct.pack('<I', args_id1[args_order[i]]) for i in range(len(args_order))]
+                # fragment.arg_refs = [struct.pack('<I', args_id1[args_order[i]]) for i in range(len(args_order))]
                 for i in range(len(args_order)):
-                    #args_id[i] = struct.pack('<I', args_id1[args_order[i]])
+                    # args_id[i] = struct.pack('<I', args_id1[args_order[i]])
                     fragment.arg_refs[i] = struct.pack('<I', args_id[args_order[i]])
                     # fragment.arg_refs[i] = fragment.arg_refs1[args_order[i]]
                     # fragment.arg_strings[i] = fragment.arg_strings1[args_order[i]]

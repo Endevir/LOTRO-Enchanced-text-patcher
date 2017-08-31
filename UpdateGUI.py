@@ -13,19 +13,23 @@ import GlobalVars as gl
 
 from ProgressDialog import ProgressDialog
 
+
 def updateContent(str):
     str = str.replace('"', '\'')
     str = str.replace('\\\\', '\\')
     return str
+
 
 def GetStringDataFromServer(file_id, gossip_id):
     gl.server_conn.request("GET", u"/groupware/getitem/" + str(file_id) + "/" + str(gossip_id))
     resp = gl.server_conn.getresponse()
     return str(resp.read()).decode('UTF-8')
 
+
 def RemovePatchFile():
     if (os.path.exists(gl.patchpath)):
         os.remove(gl.patchpath)
+
 
 def ResetOneString(file_id, gossip_id, dat_file):
     RemovePatchFile()
@@ -33,6 +37,7 @@ def ResetOneString(file_id, gossip_id, dat_file):
     data = data.split("||")
     AddOneStringToPatch(data[0], data[1], data[2], data[3], data[4])
     PatchFile(dat_file)
+
 
 def PatchOneString(file_id, gossip_id, content, args_order, dat_file):
     RemovePatchFile()
@@ -47,12 +52,14 @@ def PatchOneString(file_id, gossip_id, content, args_order, dat_file):
     kol = PatchFile(dat_file)
     gl.wnd.InformationMessage(u"Установлен перевод " + str(kol) + u" строк.")
 
+
 def PatchFile(dat_file):
     kol = PATCH_IT(gl.patchpath, dat_file)
     RemovePatchFile()
     return kol
 
-def AddOneStringToPatch (file_id, gossip_id, content, args_order, args_id):
+
+def AddOneStringToPatch(file_id, gossip_id, content, args_order, args_id):
     if args_id == "NULL":
         args_order = "Null"
         args_id = "Null"
@@ -66,7 +73,8 @@ def AddOneStringToPatch (file_id, gossip_id, content, args_order, args_id):
     if not os.path.exists(gl.patchpath):
         con = sqlite3.connect(gl.patchpath)
         cur = con.cursor()
-        cur.execute('CREATE TABLE text_files (file_id INTEGER, gossip_id INTEGER, content TEXT, args_order TEXT, args_id TEXT)')
+        cur.execute(
+            'CREATE TABLE text_files (file_id INTEGER, gossip_id INTEGER, content TEXT, args_order TEXT, args_id TEXT)')
         con.commit()
     try:
         con = sqlite3.connect(gl.patchpath)
@@ -76,10 +84,14 @@ def AddOneStringToPatch (file_id, gossip_id, content, args_order, args_id):
         con.commit()
         con.close()
     except:
-        print('INSERT INTO text_files (file_id, gossip_id, content, args_order, args_id) VALUES("' + file_id + '", "' + gossip_id + '", "' + content + '", "' + args_order + '", "' + args_id + '")')
+        print(
+        'INSERT INTO text_files (file_id, gossip_id, content, args_order, args_id) VALUES("' + file_id + '", "' + gossip_id + '", "' + content + '", "' + args_order + '", "' + args_id + '")')
         gl.wnd.ErrorMessage(u"Ошибка создания базы данных патча!")
-        logging.critical(u"Ошибка формирования базы данных патча с файлом: " + str(file_id) + " " + str(gossip_id) + " " + str(content) + " " + str(args_order) + " " + str(args_id))
+        logging.critical(
+            u"Ошибка формирования базы данных патча с файлом: " + str(file_id) + " " + str(gossip_id) + " " + str(
+                content) + " " + str(args_order) + " " + str(args_id))
         return -1
+
 
 class UpdateGUI:
     def __init__(self, parent):
@@ -101,7 +113,8 @@ class UpdateGUI:
                                                                                                       "UserNick"]) + u"\n Вы можете скачать и установить все утвержденные переводы,\nа также свои ещё не утвержденные переводы.",
                                        pos=(0, 3), size=(450, -1), style=wx.ALIGN_CENTER)
 
-        elif gl.cfg["UserGroup"] == "moderator" or gl.cfg["UserGroup"] == "developer" or gl.cfg["UserGroup"] == "administrator":
+        elif gl.cfg["UserGroup"] == "moderator" or gl.cfg["UserGroup"] == "developer" or gl.cfg[
+            "UserGroup"] == "administrator":
             self.text0 = wx.StaticText(self.wnd.gui_panel, -1, u"Вы - бог всея переводов, " + str(gl.cfg[
                                                                                                       "UserNick"]) + u"\n Вы можете скачать и установить тексты,\n переведенные или утвержденные любым пользователем: ",
                                        pos=(0, 3), size=(450, -1), style=wx.ALIGN_CENTER)
@@ -113,7 +126,8 @@ class UpdateGUI:
         self.input3 = wx.TextCtrl(self.wnd.gui_panel, -1, u"", pos=(176, 190), size=(140, 19))
 
     def SetButtons(self):
-        if gl.cfg["UserGroup"] == "moderator" or gl.cfg["UserGroup"] == "developer" or gl.cfg["UserGroup"] == "administrator":
+        if gl.cfg["UserGroup"] == "moderator" or gl.cfg["UserGroup"] == "developer" or gl.cfg[
+            "UserGroup"] == "administrator":
             self.AddModeratorButtons()
         self.text1 = wx.StaticText(self.wnd.gui_panel, -1, u"Скачать и установить тексты переводов за:", pos=(10, 60),
                                    style=wx.ALIGN_CENTER)
@@ -320,7 +334,6 @@ class UpdateGUI:
                 kol += 1
 
         gl.progress_wnd.UpdateStageText(u"Установка патча " + apptext + " ...")
-
 
         if kol > 0:
             PatchFile(self.wnd.dat_path)

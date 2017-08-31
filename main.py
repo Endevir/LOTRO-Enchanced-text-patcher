@@ -12,6 +12,7 @@ from Frame import Frame
 import GlobalVars as gl
 from datetime import datetime
 
+
 def parseConfig(name):
     if not os.path.isfile(name):
         writeBaseConfig()
@@ -26,15 +27,18 @@ def parseConfig(name):
     fin.close()
     return res
 
+
 def enhash(str):
     import hashlib
     return hashlib.md5(str.encode("utf-8")).hexdigest()
+
 
 def writeConfig(mdict, name):
     fout = open(name, 'w')
     for pair in mdict.items():
         fout.write(str(pair[0]) + '=' + str(pair[1]) + '\n')
     fout.close()
+
 
 def writeBaseConfig():
     mdict = dict()
@@ -48,6 +52,7 @@ def writeBaseConfig():
     mdict["LastUpdateTime"] = "1000000"
     mdict["ForceSaveLogin"] = "False"
     writeConfig(mdict, gl.path)
+
 
 def BaseInitialization():
     # Подготовка к запуску программы, создание папки конфигурации и файлов логов, перенаправление стандартного вывода
@@ -69,9 +74,9 @@ def BaseInitialization():
     sys.stderr = open(os.getenv("APPDATA") + "\\Cenchanced\\stderr.log", 'a', 0)
     current_time = datetime.strftime(datetime.now(), "%Y.%m.%d %H:%M:%S")
 
-    logging.info("\nIT's A NEW DAY OF MY LIFE!!! " + current_time)
-    sys.stderr.write("\nIT's A NEW DAY OF MY LIFE!!! " + current_time + "\n")
-    print("\nIT's A NEW DAY OF MY LIFE!!! " + current_time)
+    logging.info(current_time + u"Starting new instance of application")
+    sys.stderr.write(current_time.decode("utf8") + "Starting new instance of application\n")
+    print(current_time + u"\nStarting new instance of application")
 
 
 def InitializeVariables():
@@ -81,12 +86,14 @@ def InitializeVariables():
     gl.cfg = parseConfig(gl.path)
     gl.VERSION = "1.00"
 
+
 def CheckVersion():
     # Проверка совместимости текущей версии программы с файлом конфигурации
     if not gl.VERSION == gl.cfg["Version"]:
         writeBaseConfig()
         gl.cfg = parseConfig(gl.path)
         gl.cfg["Version"] = gl.VERSION
+
 
 def InitializeGUI():
     gl.app = wx.App()
@@ -100,6 +107,7 @@ def InitializeGUI():
     if gl.cfg["OpenFAQ"] == "True":
         gl.faq_wnd = FaqDialog(None)
     gl.app.MainLoop()
+
 
 def StopApplication():
     logging.info(u'Запись конфигурации. Подготовка к выходу из программы')
@@ -118,6 +126,7 @@ def StopApplication():
                                wx.OK | wx.ICON_INFORMATION | wx.STAY_ON_TOP)
         dlg.ShowModal()
         dlg.Destroy()
+
 
 if __name__ == '__main__':
     BaseInitialization()

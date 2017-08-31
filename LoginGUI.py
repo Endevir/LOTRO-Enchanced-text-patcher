@@ -6,6 +6,7 @@ import GlobalVars as gl
 import wx
 import logging
 
+
 class LoginGUI():
     def __init__(self, parent):
         self.wnd = parent
@@ -13,10 +14,10 @@ class LoginGUI():
     def DoPreparations(self):
         # Проверка непредвиденного поведения и выход
         if gl.cfg["DatPath"] == "NULL":
-            self.wnd.WarningMessage(u"Сначала укажите путь к папке и игрой!")
+            self.wnd.WarningMessage(u"Сначала укажите путь к папке с игрой!")
             return -1
 
-    def Start(self, event = None):
+    def Start(self, event=None):
         if self.DoPreparations() == -1:
             return
 
@@ -40,10 +41,10 @@ class LoginGUI():
         if self.UserName:
             if gl.cfg["UserGroup"] == "translator":
                 self.text0.SetLabel(u"Вы вошли как переводчик " + gl.cfg["UserNick"].encode(
-                    'utf-8') + u"!\n Вы можете перезайти, используя другой e-mail от сайта transtale.lotros.ru")
+                    'utf-8') + u"!\n Вы можете перезайти, используя другие e-mail и пароль от сайта transtale.lotros.ru")
             else:
                 self.text0.SetLabel(u"Вы вошли как модератор " + gl.cfg["UserNick"].encode(
-                    'utf-8') + u"!\n Вы можете перезайти, используя другой e-mail от сайта transtale.lotros.ru")
+                    'utf-8') + u"!\n Вы можете перезайти, используя другие e-mail и пароль от сайта transtale.lotros.ru")
 
         self.text_invitation = wx.StaticText(self.wnd.gui_panel, -1, u"Войти в систему: ", pos=(0, 60), size=(450, -1),
                                              style=wx.ALIGN_CENTER)
@@ -54,7 +55,8 @@ class LoginGUI():
         self.UserName_input = wx.TextCtrl(self.wnd.gui_panel, -1, "", pos=(100, 90), size=(150, 20))
 
         self.password_text = wx.StaticText(self.wnd.gui_panel, -1, u"Пароль: ", pos=(20, 120))
-        self.password_input = wx.TextCtrl(self.wnd.gui_panel, -1, "", pos=(100, 120), size=(150, 20), style=wx.TE_PASSWORD)
+        self.password_input = wx.TextCtrl(self.wnd.gui_panel, -1, "", pos=(100, 120), size=(150, 20),
+                                          style=wx.TE_PASSWORD)
 
         self.login_button = wx.Button(self.wnd.gui_panel, -1, u'Войти', pos=(150, 150))
         self.wnd.Bind(wx.EVT_BUTTON, self.Login, self.login_button)
@@ -71,11 +73,11 @@ class LoginGUI():
         self.wnd.Bind(wx.EVT_CHECKBOX, self.ChangeForceSaveLoginOption, self.cb1)
         self.wnd.Bind(wx.EVT_BUTTON, self.ExitAccount, self.but1)
 
-    def ChangeForceSaveLoginOption(self, event = None):
+    def ChangeForceSaveLoginOption(self, event=None):
         gl.cfg["ForceSaveLogin"] = str(self.cb1.GetValue())
         logging.info(u"Смена состояния параметра ForceSaveLogin на " + gl.cfg["ForceSaveLogin"])
 
-    def ExitAccount(self, event = None):
+    def ExitAccount(self, event=None):
         if gl.cfg["UserName"] == "NULL":
             self.wnd.InformationMessage(u"Вход в аккаунт не был выполнен")
             return
